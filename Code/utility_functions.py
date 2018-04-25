@@ -4,11 +4,6 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import hamming
 from sklearn import metrics, tree, ensemble, svm, model_selection
-from sklearn.neighbors.kde import KernelDensity
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
-from IPython.display import Image
 from scipy.spatial.distance import squareform
 from scipy.cluster.hierarchy import linkage, dendrogram
 from scipy.stats import fisher_exact
@@ -180,3 +175,27 @@ def gen_stem_fs(struct_list, seq_list, matrix_list):
             print('{0} / {1}'.format(n + 1, len(struct_list)))
         feature_space.ix[n, :] = characterize_first_stem(struct_list[n], seq_list[n], matrix_list[n])
     return feature_space
+
+def get_prob_matrix(base_path, file_number):
+    prob_matrix = np.zeros((135,136))
+    with open('{0}/seq_{1}.txt'.format(base_path, file_number)) as fh:
+        for line in fh:
+            i, j, value = line.strip().split()
+            i = int(i) - 1
+            j = int(j) - 1
+            value = float(value) ** 2
+            prob_matrix[i, j] = value
+            prob_matrix[j, i] = value
+    largest_sum = 0
+    for row in range(135):
+        if sum(prob_matrix[row, :]) > largest_sum:
+            largest_sum = sum(prob_matrix[row, :])
+    for row in range(135):
+            prob_matrix[row, :] = prob_matrix[row, :] / largest_sum
+            prob_matrix[row, 135] = 1.0 - sum(prob_matrix[row, :])
+    return prob_matrix
+
+def positional_entropy(prob_matrix):
+    epsilon = 10**-10
+    H_i = -np.sum(prob_matrix * np.log(prob_matrix + epsilon), axis=1)
+    return H_i

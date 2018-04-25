@@ -7,6 +7,7 @@ These scripts recapitulate the analysis presented for detecting stop codon readt
 ---
 
 - UNIX like operating system
+- wget
 - Vienna RNAfold
 - python 2.7.x or 3.x
     - numpy
@@ -37,15 +38,15 @@ Step 1. Navigate to the Data directory, download the RTseq.fastq.gz file, and ex
 
 ```bash
 $ cd Data
-$ curl -O https://www.dropbox.com/s/94z0o9c9hklhouz/RTseq.fastq.gz?dl=0
+$ wget -O RTseq.fastq.gz https://www.dropbox.com/s/94z0o9c9hklhouz/RTseq.fastq.gz?dl=0
 $ ../Code/1-preprocess.sh
 ```
 
 Step 2. If proceeding from Step 1, there should now be reads_noflag.txt and reads_flag.txt files in the Data directory. If beginning at Step 2, download the required files and uncompress before executing 2-unique_abundance.py.
 
 ```bash
-$ curl -O https://www.dropbox.com/s/kma4qcg508cjod9/reads_noflag.txt.gz?dl=0
-$ curl -O https://www.dropbox.com/s/zu4gr2zv495a1b8/reads_flag.txt.gz?dl=0
+$ wget -O reads_noflag.txt.gz https://www.dropbox.com/s/kma4qcg508cjod9/reads_noflag.txt.gz?dl=0
+$ wget -O reads_flag.txt.gz https://www.dropbox.com/s/zu4gr2zv495a1b8/reads_flag.txt.gz?dl=0
 $ gunzip reads_noflag.txt.gz
 $ gunzip reads_flag.txt.gz
 $ ../Code/2-unique_abundance.py reads_noflag.txt
