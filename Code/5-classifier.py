@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import cPickle
+import pickle
 import numpy as np
 import pandas as pd
 from sklearn import metrics, tree, ensemble, model_selection
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 parser = argparse.ArgumentParser(description='ensemble classifier fitting (training data) or application (test data)')
 parser.add_argument('-m', '--mode', required=True, help='train | predict')
@@ -23,8 +24,8 @@ parser.add_argument('-n2', '--Nseqneg', required=False, default=10000, help='use
 args = parser.parse_args()
 
 if args.mode == 'predict':
-    with open('../Out/classifier.pkl', 'r') as fh:
-        clf = cPickle.load(fh)
+    with open('../Output/classifier.pkl', 'rb') as fh:
+        clf = pickle.load(fh)
     featspace_pred = pd.read_csv(args.filepredict, header=0)
     X_pred = np.array(featspace_pred)
     y_pred = clf.predict_proba(X_pred)[:,1]
@@ -69,8 +70,10 @@ elif args.mode == 'train':
         counter += 1
         print(counter)
 
-    with open('../Out/classifier.pkl', 'w') as fh:
-        cPickle.dump(clf, fh)
+    clf = ensemble.GradientBoostingClassifier(max_depth=depth, n_estimators=boosting_rounds, learning_rate=LR)
+    clf.fit(X_train, y_train)
+    with open('../Output/classifier.pkl', 'wb') as fh:
+        pickle.dump(clf, fh)
 
     print(scores)
     print(scores.mean(), scores.std())
@@ -96,7 +99,7 @@ elif args.mode == 'train':
     plt.ylabel('Binomial Deviance')
     plt.grid('off')
     plt.tight_layout()
-    plt.savefig('../Out/boosting_loss_func.pdf')
+    plt.savefig('../Output/boosting_loss_func.pdf')
 
     feat_mean = np.mean(feature_scores, axis=0)
     feat_std = np.std(feature_scores, axis=0)
@@ -109,7 +112,7 @@ elif args.mode == 'train':
     plt.xlabel('Relative Feature Importance')
     plt.grid('off')
     plt.tight_layout()
-    plt.savefig('../Out/boosting_importances.pdf')
+    plt.savefig('../Output/boosting_importances.pdf')
 
 else:
     print('-m flag must be either train | predict')
