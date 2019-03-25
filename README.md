@@ -1,6 +1,6 @@
-## Large scale characterization of eukaryotic stop codon readthrough signals and their identification in human 3' UTRs ##
+## Interrogation of eukaryotic stop codon readthrough signals by in vitro RNA selection ##
 
-The computational workflow accompanying the aforementioned manuscript.
+This computational workflow accompanies the [published manuscript](https://pubs.acs.org/doi/abs/10.1021/acs.biochem.8b01280) with the aforementioned title.
 These scripts recapitulate the analysis presented for detecting stop codon readthrough contexts from deep sequencing of a randomized RNA library after 3 rounds of in vitro selection.
 
 ### Requirements: ###
