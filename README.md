@@ -34,7 +34,7 @@ To begin the workflow at Step 3, with the unique sequence abundances already com
 ### Usage: ###
 ---
 
-Step 1. Navigate to the Data directory, download the RTseq.fastq.gz file, and execute the 1-preprocess.sh script.
+Step 1: Navigate to the Data directory, download the RTseq.fastq.gz file, and execute the 1-preprocess.sh script.
 
 ```bash
 $ cd Data
@@ -42,7 +42,7 @@ $ wget -O RTseq.fastq.gz https://www.dropbox.com/s/94z0o9c9hklhouz/RTseq.fastq.g
 $ ../Code/1-preprocess.sh
 ```
 
-Step 2. If proceeding from Step 1, there should now be reads_noflag.txt and reads_flag.txt files in the Data directory. If beginning at Step 2, download the required files and uncompress before executing 2-unique_abundance.py.
+Step 2: If proceeding from Step 1, there should now be reads_noflag.txt and reads_flag.txt files in the Data directory. If beginning at Step 2, download the required files and uncompress before executing 2-unique_abundance.py.
 
 ```bash
 $ wget -O reads_noflag.txt.gz https://www.dropbox.com/s/kma4qcg508cjod9/reads_noflag.txt.gz?dl=0
@@ -53,19 +53,23 @@ $ ../Code/2-unique_abundance.py reads_noflag.txt
 $ ../Code/2-unique_abundance.py reads_flag.txt
 ```
 
-Step 3. If proceeding from Step 2, there should now be unique_seq_reads_noflag.txt and unique_seq_reads_flag.txt files in the Data directory. If beginning at Step 3, use the provided precomputed_unique_seq_reads_noflag.txt and precomputed_unique_seq_reads_flag.txt files as input to 3-correlation_stats.py.
+Step 3: Any unique sequence count files generated from Step 2 can now be explored for subsequence correlations, eg pairwise codon contingency tables.
 
 ```bash
-$ ../Code/3-correlation_stats.py -f unique_seq_reads_noflag.txt -n 38000 -s1s 0 -s1e 3 -s2s 3 -s2e 6
-$ ../Code/3-correlation_stats.py -f unique_seq_reads_flag.txt -n 3000 -s1s 0 -s1e 3 -s2s 3 -s2e 6
+$ ../Code/3-subsequence_stats.py -f unique_seq_reads_noflag.txt -n 38000 -s1s 0 -s1e 3 -s2s 3 -s2e 6
 ```
 
-Step 4. 
-
-Step 5. provide a motif sequence "m" to be used for nucleotide variant analysis.
+Step 4: This step takes in unique sequence counts and produces a feature space array. Each input sequence is represented as a row vector in a column space of position specific nucleotide identity as well as structural features of stem-loop formation. NOTE this step assumes the user has already prepared certain computationally expensive outputs from the ViennaRNA program rnafold.
 
 
-### Final Repo Structure After Steps 1-6: ###
+Step 5: Assuming the existence of a feature space representation of the sequence data (position specific nucleotide identity, structural features), this step can be run in either training or prediction mode. If the featurized data comes in two files corresponding to positive / negative labels, then a classifier can be trained. If a trained classifier already exists from a prior run and the featurized data is unlabeled, then the classifier can be applied to predict labels.
+
+```bash
+$ ../Code/5-classifier.py -m train -ft1 featspace_train_pos.txt -ft2 featspace_train_neg -n1 1000 -n2 5000
+$ ../Code/5-classifier.py -m predict -fp featspace_pred.txt -clf ../Out/classifier.pkl
+```
+
+### Sample repository structure after running steps 1-5: ###
 ---
 
 ```bash
@@ -73,22 +77,30 @@ $ tree readthru
     Code/
         1-preprocess.sh
         2-unique_abundance.py
-        3-correlation_stats.py
+        3-subsequence_stats.py
         4-feature_space.py
-        5-classifier_training.py
-        6-classifier_humanUTR.py
+        5-classifier.py
     Data/
-        precomputed_unique_seq_reads_flag.txt
-        precomputed_unique_seq_reads_noflag.txt
+        featspace_pred.csv
+        featspace_train_neg.csv
+        featspace_train_pos.csv
         reads_flag.txt
         reads_noflag.txt
         RTseq.fastq.gz
-        unique_seq_reads_flag.txt
-        unique_seq_reads_noflag.txt
+        unique_seq_pred.txt
+        unique_seq_train_pos.txt
+        unique_seq_train_neg.txt
+        unique_struct_pred.txt
+        unique_struct_train_pos.txt
+        unique_struct_train_neg.txt
+        unique_BPP_pred.csv
+        unique_BPP_train_pos.csv
+        unique_BPP_train_neg.csv
     Output/
-        precomputed_unique_seq_reads_flag_0_3_3_6_3000.csv
-        precomputed_unique_seq_reads_noflag_0_3_3_6_38000.csv
-        unique_seq_reads_flag_0_3_3_6_3000.csv
-        unique_seq_reads_noflag_0_3_3_6_38000.csv
+        boosting_importances.pdf
+        boosting_loss_func.pdf
+        classifier.pkl
+        subsequence_stats_0_3_3_6_38000.csv
+        predicted_labels.txt
     README.md
 ```

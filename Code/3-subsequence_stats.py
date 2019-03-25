@@ -21,18 +21,17 @@ parser.add_argument('-s2e', '--seq2end', required=True, help='subsequence 2 endi
 parser.add_argument('-n', '--numseq', required=False, default=1000, help='number of most abundant sequences to analyze')
 args = parser.parse_args()
 
-q = open(args.filename, 'r')
-
 seq_list = []
 str1_list = []
 str2_list = []
 rows = []
 cols = []
 
-for line in q:
-	sequence = line.split()[1].strip()
-	seq_list.append(sequence)
-seq_list = seq_list[:int(args.numseq)]
+with open(args.filename, 'r') as fh:
+	for line in fh:
+		sequence = line.split()[1].strip()
+		seq_list.append(sequence)
+	seq_list = seq_list[:int(args.numseq)]
 
 for seq in seq_list:
 	str1 = seq[int(args.seq1start):int(args.seq1end)]
@@ -71,7 +70,7 @@ for pair in paired_str:
 exp = expected_freq(obs)
 
 # obs is a numpy array containing the number of observations for each unique pairing of string 1 and string 2
-# exp is a numpy array containing the expected number of observation 
+# exp is a numpy array containing the expected number of observation
 
 m0_obs, m1_obs = margins(obs)
 m0_exp, m1_exp = margins(exp)
@@ -122,5 +121,5 @@ for row in range(len(rows)):
 		df_row = pd.DataFrame({'pvalue' : [pvalue], 'adj_pvalue' : [adj_pvalue], 'chi2' : [chi2],'phi' : [phi],'residual' : [residual],'string_1' : [str1],'string_2' : [str2],'sequence' : [sequence],'odds_ratio' : [odds],'expected' : [expected],'observed' : [observed]})
 		df = df.append(df_row)
 
-df.to_csv('../Output/{0}_{1}_{2}_{3}_{4}_{5}.csv'.format(args.filename[:-4],
-	int(args.seq1start), int(args.seq1end), int(args.seq2start), int(args.seq2end), int(args.numseq)), index=False)
+df.to_csv('../Output/subseq_stats_{0}_{1}_{2}_{3}_{4}.csv'.format(
+								args.seq1start, args.seq1end, args.seq2start, args.seq2end, args.numseq), index=False)
