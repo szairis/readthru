@@ -62,7 +62,9 @@ $ ../Code/3-subsequence_stats.py -f unique_seq_reads_noflag.txt -n 38000 -s1s 0 
 Step 4: This step takes in unique sequence counts and produces a feature space array. Each input sequence is represented as a row vector in a column space of position specific nucleotide identity as well as structural features of stem-loop formation. NOTE this step assumes the user has already prepared certain computationally expensive outputs from the ViennaRNA program RNAfold. Bypassing this step, feature spaces for positive and negative training examples from the in vitro selection can be downloaded below, as well as featurized 3' UTRs from the human transcriptome:
 
 [positive examples / no FLAG](https://www.dropbox.com/s/8abnh7upkru5yd3/featspace_top10k_training_noflag.csv?dl=0)
+
 [negative examples / FLAG](https://www.dropbox.com/s/ipqarqnj0mbbdsu/featspace_top10k_training_flag.csv?dl=0)
+
 [unlabeled human 3' UTRs](https://www.dropbox.com/s/mhebiy6jszya7xd/featspace_utr_human.csv?dl=0)
 
 
